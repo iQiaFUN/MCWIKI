@@ -1,7 +1,5 @@
-const request = require("sync-request");
-const { segment } = require("oicq");
-const wiki_url = 'https://searchwiki.biligame.com/mc/index.php?search=';
-const cmd = '/wiki';
+const path = require('path');
+const cfg = JSON.parse(NIL.IO.readFrom(path.join(__dirname, 'config.json')));
 
 function getText(e) {
     var rt = '';
@@ -15,27 +13,25 @@ function getText(e) {
     return rt;
 }
 
+class MCwiki extends NIL.NIL.ModuleBase{
 
+    onStart(api){
+        api.listen('onMainMessageReceived',(e)=>{
+            let text = getText(e);
+            let pt = text.split(' ');
+            if(pt[0]==cfg.cmd){
+                if(pt.length < 3){
+                    let key = encodeURIComponent(pt[1]);
+                    let wiki = cfg.wiki_url + key;
+                    var str = `[Minecraft WIKI]\n\n${wiki}\n\n${pt[1]} - BWIKI`;
+                    e.reply(str);
+                }
+            }
+        });
+    }
 
-function onStart(api){
-    api.listen('onMainMessageReceived',(e)=>{
-		let text = getText(e);
-		let pt = text.split(' ');
-		if(pt[0]==cmd){
-			if(pt.length < 3){
-				let key = encodeURIComponent(pt[1]);
-				let wiki = wiki_url + key;
-				var str = `[Minecraft WIKI]\n\n${wiki}\n\n${pt[1]} - BWIKI`;
-				e.reply(str);
-			}
-		}
-	});
+    onStop(){}
 }
 
-function onStop(){
-}
 
-module.exports = {
-    onStart,
-    onStop
-};
+module.exports = new MCwiki;
