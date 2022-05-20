@@ -13,7 +13,7 @@ function getText(e) {
     return rt;
 }
 
-class MCwiki extends NIL.NIL.ModuleBase{
+class MCwiki extends NIL.ModuleBase{
 
     onStart(api){
         api.listen('onMainMessageReceived',(e)=>{
